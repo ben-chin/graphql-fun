@@ -1,24 +1,36 @@
 import {
-    graphql,
     GraphQLSchema,
     GraphQLObjectType,
-    GraphQLString,
+    GraphQLInt,
+    GraphQLNonNull,
 } from 'graphql';
 
-const rootQuery = new GraphQLObjectType({
-    name: 'Query',
-    fields: {
-        name: {
-            type: GraphQLString,
-            resolve() {
-                return 'A little Ben';
+import {
+    PersonType,
+    getPerson,
+} from 'graphtypes/Person';
+
+
+const RootQueryType = new GraphQLObjectType({
+    name: 'RootQuery',
+    fields: () => ({
+        person: {
+            type: PersonType,
+            args: {
+                id: {
+                    name: 'id',
+                    type: new GraphQLNonNull(GraphQLInt),
+                },
+            },
+            resolve: (root, { id }) => {
+                return getPerson(id);
             },
         }
-    },
+    }),
 });
 
-const testSchema = new GraphQLSchema({
-    query: rootQuery,
+const TestSchema = new GraphQLSchema({
+    query: RootQueryType,
 });
 
-export default testSchema;
+export default TestSchema;
